@@ -67,9 +67,8 @@ void Wifi::wifiSTAMode()
     });
     disconnectedHandler = WiFi.onStationModeDisconnected([this](const WiFiEventStationModeDisconnected& event)
     {
-        disconnect();
+        wifiAPMode();
     });
-
     WiFi.setPhyMode(WIFI_PHY_MODE_11N);
     WiFi.begin(this->SSID,this->PASSWD);
     WiFi.setAutoConnect(true);
@@ -79,13 +78,16 @@ void Wifi::wifiSTAMode()
 void Wifi::wifiAPMode()
 {   
     String SSID = "HUSensor_"+WiFi.softAPmacAddress().substring(0,5);
-    WiFi.mode(WIFI_AP);
+    WiFi.setAutoReconnect(false);
+    WiFi.disconnect(true);
+    WiFi.setSleepMode(WIFI_NONE_SLEEP);
+    WiFi.mode(WIFI_AP_STA);
     WiFi.setPhyMode(WIFI_PHY_MODE_11G);
     IPAddress local_ip = IPAddress(192,168,1,1);
-    IPAddress gateway = IPAddress(192,168,1,2);
+    IPAddress gateway = IPAddress(192,168,1,1);
     IPAddress subnet = IPAddress(255,255,255,0);
     WiFi.softAPConfig(local_ip,gateway,subnet);
-    WiFi.softAP(SSID,emptyString,8,0,4);
+    WiFi.softAP(SSID,"",4,0,4);
     WiFi.waitForConnectResult();
     WiFi.printDiag(Serial);
     Serial.println(WiFi.softAPIP().toString());
@@ -105,14 +107,14 @@ void Wifi::connect()
     if(WiFi.status()!=WL_CONNECTED&&!SSID.isEmpty())
     {
         wifiSTAMode();
+        return;
     }
+    wifiAPMode();
 }
 
 bool Wifi::disconnect()
 {
-    bool result = WiFi.disconnect(true);
-    wifiAPMode();
-    return result;
+    return WiFi.disconnect(true);
 }
 
 void Wifi::setPASSWD(const String& PASSWD)
@@ -123,4 +125,14 @@ void Wifi::setPASSWD(const String& PASSWD)
 void Wifi::setSSID(const String& SSID)
 {
     this->SSID = SSID;
+}
+
+String Wifi::getPASSWD()
+{
+    return PASSWD;
+}
+
+String Wifi::getSSID()
+{
+    return SSID;
 }

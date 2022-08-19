@@ -17,6 +17,8 @@ class Wifi
         Wifi();
         static const int wifiStatusLed = 2;
 
+        String getSSID();
+        String getPASSWD();
         void getWifiData();
         void connect();
         bool disconnect();
