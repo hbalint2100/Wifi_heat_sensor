@@ -1,10 +1,14 @@
 #include "WebserverTask.h"
 
-WebserverTask::WebserverTask(int port) : webserver(port){}
+static const char content[] PROGMEM = "<!DOCTYPE html><html><head><title>404 - Page not found!</title> <meta charset=\"UTF-8\"></head><body><h1>404 - Requested page not found!</h1></body></html>";
+
+WebserverTask::WebserverTask(int port) : webserver(port)
+{
+    updateserver.setup(&webserver);
+}
 
 void WebserverTask::notFound()
 {
-    String content = "<!DOCTYPE html><html><head><title>404 - Page not found!</title> <meta charset=\"UTF-8\"></head><body><h1>404 - Requested page not found!</h1></body></html>";
     webserver.send(404,"text/html",content);
 }
 

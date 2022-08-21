@@ -3,9 +3,12 @@
 #include "Scheduler.h"
 #include "WebserverTask.h"
 #include "WifiscanTask.h"
+#include "MqttTask.h"
 #include "LittleFS.h"
+#include "Messenger.h"
 
-void setup() {
+void setup() 
+{
   // put your setup code here, to run once:
   Serial.begin(9600);
   delay(50);
@@ -22,13 +25,17 @@ void setup() {
   pinMode(Wifi::wifiStatusLed,OUTPUT);
   digitalWrite(Wifi::wifiStatusLed,HIGH);
   delay(200);
+  Messenger messenger;
   Wifi wifiCtrl;
   wifiCtrl.getWifiData();
   wifiCtrl.connect();
   WebserverTask webserverTask(80);
   WifiscanTask wifiscanTask(wifiCtrl);
+  MqttTask mqttTask;
+  messenger.registerTask(mqttTask);
   Scheduler.start(&webserverTask);
   Scheduler.start(&wifiscanTask);
+  Scheduler.start(&mqttTask);
   Scheduler.begin();
 }
 
