@@ -1,10 +1,17 @@
 #include "MqttTask.h"
+#include "System.h"
+#include "MQTTDataMessage.h"
 
 void MqttTask::setup()
 {
+    if(!System.getMqttCtrl().isSet())
+    {
+        disable();
+        return;
+    }
     if(WiFi.status()==WL_CONNECTED)
     {
-        mqttCtrl.connect();
+        System.getMqttCtrl().connect();
         setInterval(20000L);
     }
     else
@@ -18,11 +25,11 @@ void MqttTask::loop()
 {
     if(WiFi.status()==WL_CONNECTED)
     {
-        if(!mqttCtrl.getClient().loop())
+        if(!System.getMqttCtrl().getClient().loop())
         {
-            mqttCtrl.connect();
+            System.getMqttCtrl().connect();
         }
-        if(mqttCtrl.getClient().connected())
+        if(System.getMqttCtrl().getClient().connected())
         {
             MQTTDataMessage buffer[5];
             if(receiveMessage<MQTTDataMessage>(buffer,5,"MQTT"))
@@ -31,7 +38,7 @@ void MqttTask::loop()
                 {
                     if(!buffer[i].getTopic().isEmpty()&&!buffer[i].getTopic().isEmpty())
                     {
-                        mqttCtrl.getClient().publish(buffer[i].getTopic().c_str(),buffer[i].getPayload().c_str(),buffer[i].isRetained());
+                        System.getMqttCtrl().getClient().publish(buffer[i].getTopic().c_str(),buffer[i].getPayload().c_str(),buffer[i].isRetained());
                     }
                 }
             }

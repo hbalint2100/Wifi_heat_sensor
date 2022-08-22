@@ -4,9 +4,14 @@ static const String productName = "HUSensor";
 
 MQTT::MQTT()
 {
+    set = false;
     mqttClient.setClient(wifiClient);
-    getMqttData();
-    mqttClient.setKeepAlive(40);
+    mqttClient.setKeepAlive(600);
+}
+
+bool MQTT::isSet()
+{
+    return set;
 }
 
 bool MQTT::connect()
@@ -78,7 +83,7 @@ void MQTT::getMqttData()
             IPAddress ip;
             ip.fromString(_brokerIP);
             mqttClient.setServer(ip,atoi(_port.c_str()));
-            
+            set = true;
         }
     }
 }

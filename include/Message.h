@@ -8,7 +8,9 @@ class Message
     unsigned senderMessengerTaskId = 0;
     unsigned receiverMessengerTaskId = 0;
     String key;
-    protected:
+    public:
+    unsigned getSenderMessengerTaskId();
+    void setReceiverMessengerTaskId(unsigned receiverMessengerTaskId);
     friend class Messenger;
     friend class MessengerInterface;
 };

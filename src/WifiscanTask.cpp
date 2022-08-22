@@ -1,30 +1,32 @@
 #include "WifiscanTask.h"
+#include "System.h"
+#include <Arduino.h>
 
 void WifiscanTask::setup()
 {
-    if(wifiCtrl.getSSID().isEmpty())
+    if(System.getWifiCtrl().getSSID().isEmpty())
     {
         disable();
     }
     setInterval(10000L);
-    Serial.println("Scan task started");
+    Serial.println("Wifi scan task started");
 }
 
 void WifiscanTask::loop()
 {
-    if((WiFi.getMode()==WIFI_AP||WiFi.getMode()==WIFI_AP_STA)&&WiFi.status()!=WL_CONNECTED&&WiFi.softAPgetStationNum()==0&&millis()-lastCheck>=10000L)
+    if((WiFi.getMode()==WIFI_AP||WiFi.getMode()==WIFI_AP_STA)&&WiFi.status()!=WL_CONNECTED&&WiFi.softAPgetStationNum()==0)
     {
         int networks = WiFi.scanNetworks();
         for(int i = 0; i < networks; i++)
         {
-            if(WiFi.SSID(i)==wifiCtrl.getSSID())
+            if(WiFi.SSID(i)==System.getWifiCtrl().getSSID())
             {
-                wifiCtrl.connect();
+                System.getWifiCtrl().connect();
+                break;
             }
         }
-        lastCheck = millis();
     }
-    else if(WiFi.getMode()==WIFI_STA)
+    else if(WiFi.getMode()==WIFI_STA&&getInterval()!=40000L)
     {
         setInterval(40000L);
     }

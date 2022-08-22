@@ -88,9 +88,7 @@ void Wifi::wifiAPMode()
     IPAddress subnet = IPAddress(255,255,255,0);
     WiFi.softAPConfig(local_ip,gateway,subnet);
     WiFi.softAP(SSID,"",4,0,4);
-    WiFi.waitForConnectResult();
     WiFi.printDiag(Serial);
-    Serial.println(WiFi.softAPIP().toString());
     for (unsigned i = 0; i < 10; i++)
     {
         digitalWrite(wifiStatusLed,LOW);
@@ -103,7 +101,6 @@ void Wifi::wifiAPMode()
 void Wifi::connect()
 {
     enable();
-    delay(10);
     if(WiFi.status()!=WL_CONNECTED&&!SSID.isEmpty())
     {
         wifiSTAMode();

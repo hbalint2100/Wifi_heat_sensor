@@ -1,37 +1,24 @@
-#include <Arduino.h>
-#include "Wifi.h"
 #include "Scheduler.h"
 #include "WebserverTask.h"
 #include "WifiscanTask.h"
 #include "MqttTask.h"
-#include "LittleFS.h"
 #include "Messenger.h"
+#include "System.h"
 
 void setup() 
 {
   // put your setup code here, to run once:
-  Serial.begin(9600);
-  delay(50);
-  Serial.println();
-  system_set_os_print(true);
-  LittleFSConfig cfg;
-  cfg.setAutoFormat(true);
-  LittleFS.setConfig(cfg);
-  if(!LittleFS.begin())
-  {
-    Serial.println("File system mount error");
-    return;
-  }
-  pinMode(Wifi::wifiStatusLed,OUTPUT);
-  digitalWrite(Wifi::wifiStatusLed,HIGH);
-  delay(200);
-  Messenger messenger;
-  Wifi wifiCtrl;
-  wifiCtrl.getWifiData();
-  wifiCtrl.connect();
+  System.initializeSerial();
+  System.mountFileSystem();
+  System.initializePins();
+  System.getWifiCtrl().getWifiData();
+  System.getWifiCtrl().connect();
+  System.getMqttCtrl().getMqttData();
+  pinMode(0,INPUT);
   WebserverTask webserverTask(80);
-  WifiscanTask wifiscanTask(wifiCtrl);
+  WifiscanTask wifiscanTask;
   MqttTask mqttTask;
+  Messenger messenger;
   messenger.registerTask(mqttTask);
   Scheduler.start(&webserverTask);
   Scheduler.start(&wifiscanTask);

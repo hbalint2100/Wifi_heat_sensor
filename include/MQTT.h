@@ -13,10 +13,12 @@ class MQTT
     String deviceName;
     String username;
     String password;
-    void getMqttData();
+    bool set;
     public:
     MQTT();
     ~MQTT();
     bool connect();
+    bool isSet();
+    void getMqttData();
     PubSubClient& getClient();
 };

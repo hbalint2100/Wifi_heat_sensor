@@ -13,5 +13,11 @@ void Messenger::registerTask(MessengerInterface& task)
 
 Messenger::~Messenger()
 {
-    delete messageQueueHeader;
+    Message *prev;
+    for(Message *current = messageQueueHeader;current!=nullptr;)
+    {
+        prev = current;
+        current = current->next;
+        delete prev;
+    }
 }
