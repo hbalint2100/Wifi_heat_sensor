@@ -2,7 +2,7 @@
 
 static const char content[] PROGMEM = "<!DOCTYPE html><html><head><title>404 - Page not found!</title> <meta charset=\"UTF-8\"></head><body><h1>404 - Requested page not found!</h1></body></html>";
 
-WebserverTask::WebserverTask(int port) : webserver(port)
+WebserverTask::WebserverTask(int port) : SystemControlledTask("WebserverTask"), webserver(port)
 {
     updateserver.setup(&webserver);
 }

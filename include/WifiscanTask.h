@@ -1,9 +1,10 @@
 #pragma once
-#include "LeanTask.h"
+#include "SystemControlledTask.h"
 
-class WifiscanTask : public LeanTask
+class WifiscanTask : public SystemControlledTask
 {
     public:
+    WifiscanTask() : SystemControlledTask("WifiscanTask"){}
     void setup();
     void loop();
 };

@@ -8,17 +8,25 @@ void WifiscanTask::setup()
     {
         disable();
     }
-    setInterval(10000L);
+    setInterval(2000L);
     Serial.println("Wifi scan task started");
 }
 
 void WifiscanTask::loop()
 {
-    if((WiFi.getMode()==WIFI_AP||WiFi.getMode()==WIFI_AP_STA)&&WiFi.status()!=WL_CONNECTED&&WiFi.softAPgetStationNum()==0)
+    if((WiFi.getMode()==WIFI_AP||WiFi.getMode()==WIFI_AP_STA)&&WiFi.softAPgetStationNum()==0)
     {
+        if(WiFi.status()==WL_CONNECTED)
+        {
+            System.getWifiCtrl().disable();
+        }
+        Serial.println("Wifi scan");
+        WiFi.mode(WIFI_AP_STA);
+        WiFi.setOutputPower(20.5);
         int networks = WiFi.scanNetworks();
         for(int i = 0; i < networks; i++)
         {
+            Serial.println(WiFi.SSID(i));
             if(WiFi.SSID(i)==System.getWifiCtrl().getSSID())
             {
                 System.getWifiCtrl().connect();

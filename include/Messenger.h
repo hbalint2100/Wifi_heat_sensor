@@ -10,5 +10,6 @@ class Messenger
     public:
     Messenger();
     ~Messenger();
+    bool isEmpty();
     void registerTask(MessengerInterface& task);
 };

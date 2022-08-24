@@ -11,15 +11,19 @@ void setup()
   System.initializeSerial();
   System.mountFileSystem();
   System.initializePins();
+  if(System.wakeUpFromDS())
+  {
+    System.wake();
+  }
   System.getWifiCtrl().getWifiData();
   System.getWifiCtrl().connect();
   System.getMqttCtrl().getMqttData();
-  pinMode(0,INPUT);
   WebserverTask webserverTask(80);
   WifiscanTask wifiscanTask;
   MqttTask mqttTask;
-  Messenger messenger;
-  messenger.registerTask(mqttTask);
+  System.getMessenger().registerTask(mqttTask);
+  System.addTask(&webserverTask);
+  System.addTask(&wifiscanTask);
   Scheduler.start(&webserverTask);
   Scheduler.start(&wifiscanTask);
   Scheduler.start(&mqttTask);
@@ -28,4 +32,32 @@ void setup()
 
 void loop() {
   // put your main code here, to run repeatedly:
+  if((WiFi.getMode()==WIFI_AP_STA||WiFi.getMode()==WIFI_STA)
+  &&System.getMqttCtrl().getClient().connected()
+  &&millis()>System.lastSleep&&millis()-System.lastSleep>45000L&&System.getMessenger().isEmpty())
+  {
+    Serial.println("Millis:"+String(millis()));
+    Serial.println("Last sleep:"+String(System.lastSleep));
+    Serial.flush();
+    delay(50);
+    System.sleep(240);
+  }
+  if(WiFi.getMode()==WIFI_STA&&millis()>300000L)
+  {
+    SystemControlledTask* task = System.getTaskWithId("WebserverTask");
+    if(task&&task->isEnabled())
+    {
+      task->disable();
+      Serial.println("Webserver disabled");
+    }
+  }
+  else if((WiFi.getMode()==WIFI_AP||WiFi.getMode()==WIFI_AP_STA))
+  {
+    SystemControlledTask* task = System.getTaskWithId("WebserverTask");
+    if(task&&!task->isEnabled())
+    {
+      task->enable();
+      Serial.println("Webserver enabled");
+    }
+  }
 }

@@ -21,3 +21,8 @@ Messenger::~Messenger()
         delete prev;
     }
 }
+
+bool Messenger::isEmpty()
+{
+    return messageQueueHeader->next == nullptr;
+}

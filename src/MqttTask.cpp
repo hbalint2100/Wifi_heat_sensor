@@ -38,7 +38,9 @@ void MqttTask::loop()
                 {
                     if(!buffer[i].getTopic().isEmpty()&&!buffer[i].getTopic().isEmpty())
                     {
-                        System.getMqttCtrl().getClient().publish(buffer[i].getTopic().c_str(),buffer[i].getPayload().c_str(),buffer[i].isRetained());
+                        System.getMqttCtrl().getClient().publish(
+                            ("/HUSensor/"+System.getMqttCtrl().getDeviceName()+"/"+buffer[i].getTopic()).c_str(),
+                            buffer[i].getPayload().c_str(),buffer[i].isRetained());
                     }
                 }
             }

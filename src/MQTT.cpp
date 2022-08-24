@@ -6,7 +6,7 @@ MQTT::MQTT()
 {
     set = false;
     mqttClient.setClient(wifiClient);
-    mqttClient.setKeepAlive(600);
+    mqttClient.setKeepAlive(900);
 }
 
 bool MQTT::isSet()
@@ -16,7 +16,7 @@ bool MQTT::isSet()
 
 bool MQTT::connect()
 {
-    String willTopic = "/"+productName+"/"+deviceName+"/status";
+    String willTopic = productName+"/"+deviceName+"/status";
     if(!deviceName.isEmpty()&&!username.isEmpty()&&!password.isEmpty()&&mqttClient.connect(deviceName.c_str(),username.c_str(),password.c_str(),willTopic.c_str(),2,true,"Offline"))
     {
         Serial.println("MQTT connected");
@@ -83,7 +83,10 @@ void MQTT::getMqttData()
             IPAddress ip;
             ip.fromString(_brokerIP);
             mqttClient.setServer(ip,atoi(_port.c_str()));
-            set = true;
+            if(_brokerIP!=emptyString&&_port!=emptyString&&_deviceName!=emptyString)
+            {
+                set = true;
+            }
         }
     }
 }
@@ -99,4 +102,9 @@ MQTT::~MQTT()
     {
         mqttClient.disconnect();
     }
+}
+
+const String& MQTT::getDeviceName()
+{
+    return deviceName;
 }

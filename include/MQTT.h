@@ -19,6 +19,7 @@ class MQTT
     ~MQTT();
     bool connect();
     bool isSet();
+    const String& getDeviceName();
     void getMqttData();
     PubSubClient& getClient();
 };

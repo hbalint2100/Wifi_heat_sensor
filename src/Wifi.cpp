@@ -3,21 +3,29 @@
 
 WiFiEventHandler connectedHandler, disconnectedHandler;
 
-Wifi::Wifi(){}
+Wifi::Wifi()
+{
+    disabled = true;
+}
 
 Wifi::Wifi(const String& SSID,const String& PASSWD)
 {
+    disabled = true;
     setPASSWD(PASSWD);
     setSSID(SSID);
 }
 
 bool Wifi::enable()
 {
-    return WiFi.mode(WIFI_STA);
+    disabled = false;
+    return true;
 }
 
 bool Wifi::disable()
 {
+    disabled = true;
+    digitalWrite(wifiStatusLed,HIGH);
+    delay(50);
     return WiFi.mode(WIFI_OFF);
 }
 
@@ -58,8 +66,12 @@ void Wifi::getWifiData()
     }
 }
 
-void Wifi::wifiSTAMode()
+bool Wifi::wifiSTAMode()
 {
+    if(disabled)
+    {
+        return false;
+    }
     connectedHandler = WiFi.onStationModeConnected([](const WiFiEventStationModeConnected& event)
     {
         WiFi.printDiag(Serial);
@@ -67,21 +79,31 @@ void Wifi::wifiSTAMode()
     });
     disconnectedHandler = WiFi.onStationModeDisconnected([this](const WiFiEventStationModeDisconnected& event)
     {
-        wifiAPMode();
+        Serial.println("Disconnected");
+        digitalWrite(wifiStatusLed,HIGH);
     });
+    WiFi.setSleepMode(WIFI_LIGHT_SLEEP);
+    WiFi.mode(WIFI_STA);
+    WiFi.setOutputPower(20.5);
     WiFi.setPhyMode(WIFI_PHY_MODE_11N);
     WiFi.begin(this->SSID,this->PASSWD);
     WiFi.setAutoConnect(true);
     WiFi.setAutoReconnect(true);
+    WiFi.persistent(true);
+    return WiFi.waitForConnectResult(30000L)==WL_CONNECTED;
 }
 
 void Wifi::wifiAPMode()
 {   
+    if(disabled)
+    {
+        return;
+    }
     String SSID = "HUSensor_"+WiFi.softAPmacAddress().substring(0,5);
     WiFi.setAutoReconnect(false);
     WiFi.disconnect(true);
-    WiFi.setSleepMode(WIFI_NONE_SLEEP);
-    WiFi.mode(WIFI_AP_STA);
+    WiFi.setSleepMode(WIFI_LIGHT_SLEEP,5);
+    WiFi.mode(WIFI_AP);
     WiFi.setPhyMode(WIFI_PHY_MODE_11G);
     IPAddress local_ip = IPAddress(192,168,1,1);
     IPAddress gateway = IPAddress(192,168,1,1);
@@ -101,12 +123,14 @@ void Wifi::wifiAPMode()
 void Wifi::connect()
 {
     enable();
-    if(WiFi.status()!=WL_CONNECTED&&!SSID.isEmpty())
+    if(WiFi.status()!=WL_CONNECTED)
     {
-        wifiSTAMode();
-        return;
+        if(!SSID.isEmpty()&&wifiSTAMode())
+        {
+            return;
+        }
+        wifiAPMode();
     }
-    wifiAPMode();
 }
 
 bool Wifi::disconnect()

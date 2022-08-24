@@ -9,9 +9,10 @@ class Wifi
     private:
         String SSID;
         String PASSWD;
+        bool disabled;
         bool findSubString(const String& text,String match,int& startPos);
         void wifiAPMode();
-        void wifiSTAMode();
+        bool wifiSTAMode();
     public:
         Wifi(const String& ssid,const String& password);
         Wifi();
