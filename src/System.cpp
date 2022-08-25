@@ -7,6 +7,7 @@
 bool SystemClass::fileSystemMounted = false;
 Wifi SystemClass::wifiCtrl;
 MQTT SystemClass::mqttCtrl;
+Sensors SystemClass::sensorCtrl;
 Messenger SystemClass::messenger;
 SystemControlledTask* SystemClass::tasks = nullptr;
 unsigned long SystemClass::lastSleep = 120000L;
@@ -49,6 +50,11 @@ Wifi& SystemClass::getWifiCtrl()
 MQTT& SystemClass::getMqttCtrl()
 {
     return mqttCtrl;
+}
+
+Sensors& SystemClass::getSensorCtrl()
+{
+    return sensorCtrl;
 }
 
 Messenger& SystemClass::getMessenger()

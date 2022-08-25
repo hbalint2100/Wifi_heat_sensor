@@ -1,6 +1,7 @@
 #include "Scheduler.h"
 #include "WebserverTask.h"
 #include "WifiscanTask.h"
+#include "SensingTask.h"
 #include "MqttTask.h"
 #include "Messenger.h"
 #include "System.h"
@@ -21,9 +22,12 @@ void setup()
   WebserverTask webserverTask(80);
   WifiscanTask wifiscanTask;
   MqttTask mqttTask;
-  System.getMessenger().registerTask(mqttTask);
+  SensingTask sensingTask;
   System.addTask(&webserverTask);
   System.addTask(&wifiscanTask);
+  System.getMessenger().registerTask(mqttTask);
+  System.getMessenger().registerTask(sensingTask);
+  Scheduler.start(&sensingTask);
   Scheduler.start(&webserverTask);
   Scheduler.start(&wifiscanTask);
   Scheduler.start(&mqttTask);
@@ -34,8 +38,12 @@ void loop() {
   // put your main code here, to run repeatedly:
   if((WiFi.getMode()==WIFI_AP_STA||WiFi.getMode()==WIFI_STA)
   &&System.getMqttCtrl().getClient().connected()
-  &&millis()>System.lastSleep&&millis()-System.lastSleep>45000L&&System.getMessenger().isEmpty())
+  &&millis()>System.lastSleep&&millis()-System.lastSleep>45000L)
   {
+    if(!System.getMessenger().isEmpty())
+    {
+      //todo
+    }
     Serial.println("Millis:"+String(millis()));
     Serial.println("Last sleep:"+String(System.lastSleep));
     Serial.flush();

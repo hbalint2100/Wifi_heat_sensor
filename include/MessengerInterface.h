@@ -8,20 +8,28 @@ class MessengerInterface
     Message* queue = nullptr;
     protected:
     template <typename T>
-    bool sendMessage(const T& message);
+    bool sendMessage(const T& message, String key = emptyString);
     template <typename T>
     bool receiveMessage(T* buffer = nullptr,int size = 0,String key = emptyString);
     friend class Messenger;
 };
 
 template <typename T>
-bool MessengerInterface::sendMessage(const T& i_message)
+bool MessengerInterface::sendMessage(const T& i_message,String key)
 {
     if(!queue)
     {
         return false;
     }
     Message *message = static_cast<Message*>(new T(i_message));
+    if(!message)
+    {
+        return false;
+    }
+    if(key!=emptyString)
+    {
+        message->setKey(key);
+    }
     message->next = queue->next;
     message->senderMessengerTaskId = messengerTaskId;
     queue->next = message;

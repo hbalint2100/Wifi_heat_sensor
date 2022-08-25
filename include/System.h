@@ -3,13 +3,16 @@
 #include "MQTT.h"
 #include "SystemControlledTask.h"
 #include "Messenger.h"
+#include "Sensors.h"
+#include "MessengerInterface.h"
 
-class SystemClass
+class SystemClass : public MessengerInterface
 {
     private:
     static bool fileSystemMounted;
     static Wifi wifiCtrl;
     static MQTT mqttCtrl;
+    static Sensors sensorCtrl;
     static Messenger messenger;
     static SystemControlledTask* tasks;
     public:
@@ -22,6 +25,7 @@ class SystemClass
     static uint32 RTCmillis();
     static Wifi& getWifiCtrl();
     static MQTT& getMqttCtrl();
+    static Sensors& getSensorCtrl();
     static Messenger& getMessenger();
     static void addTask(SystemControlledTask *task);
     static SystemControlledTask* getTaskWithId(String ID);

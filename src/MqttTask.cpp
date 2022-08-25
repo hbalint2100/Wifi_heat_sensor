@@ -34,14 +34,27 @@ void MqttTask::loop()
             MQTTDataMessage buffer[5];
             if(receiveMessage<MQTTDataMessage>(buffer,5,"MQTT"))
             {
+                Serial.println("Message received");
+                int trying = 0;
+                int success = 0;
                 for(int i = 0; i < 5; i++)
                 {
                     if(!buffer[i].getTopic().isEmpty()&&!buffer[i].getTopic().isEmpty())
                     {
-                        System.getMqttCtrl().getClient().publish(
-                            ("/HUSensor/"+System.getMqttCtrl().getDeviceName()+"/"+buffer[i].getTopic()).c_str(),
-                            buffer[i].getPayload().c_str(),buffer[i].isRetained());
+                        trying++;
+                        if(System.getMqttCtrl().getClient().publish(
+                            (System.getMqttCtrl().getRoute()+buffer[i].getTopic()).c_str(),
+                            buffer[i].getPayload().c_str(),buffer[i].isRetained()))
+                        {
+                            success++;
+                        }
                     }
+                }
+                if(success == trying)
+                {
+                    Message message;
+                    message.setMessageText("All data successfully sent");
+                    sendMessage<Message>(message,"System");
                 }
             }
         }

@@ -1,12 +1,12 @@
 #include "MQTT.h"
 #define CONF_PATH "/config"
-static const String productName = "HUSensor";
+static const String route = "HUSensor/";
 
 MQTT::MQTT()
 {
     set = false;
     mqttClient.setClient(wifiClient);
-    mqttClient.setKeepAlive(900);
+    mqttClient.setKeepAlive(150);
 }
 
 bool MQTT::isSet()
@@ -16,15 +16,18 @@ bool MQTT::isSet()
 
 bool MQTT::connect()
 {
-    String willTopic = productName+"/"+deviceName+"/status";
-    if(!deviceName.isEmpty()&&!username.isEmpty()&&!password.isEmpty()&&mqttClient.connect(deviceName.c_str(),username.c_str(),password.c_str(),willTopic.c_str(),2,true,"Offline"))
+    if(!deviceName.isEmpty()&&!username.isEmpty()&&!password.isEmpty()&&mqttClient.connect(deviceName.c_str(),username.c_str(),password.c_str()))
     {
         Serial.println("MQTT connected");
-        mqttClient.publish(willTopic.c_str(),"Online",true);
         return true;
     }
     Serial.println("MQTT couldn't connect");
     return false;
+}
+
+String MQTT::getRoute()
+{
+    return route+deviceName+'/';
 }
 
 void MQTT::getMqttData()
