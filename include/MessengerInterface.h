@@ -30,6 +30,7 @@ bool MessengerInterface::sendMessage(const T& i_message,String key)
     {
         message->setKey(key);
     }
+    message->time = millis();
     message->next = queue->next;
     message->senderMessengerTaskId = messengerTaskId;
     queue->next = message;

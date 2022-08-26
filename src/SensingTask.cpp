@@ -4,7 +4,7 @@
 
 void SensingTask::setup()
 {
-    setInterval(90000L);
+    setInterval(600000L);
 }
 
 void SensingTask::loop()

@@ -39,6 +39,7 @@ void SystemClass::mountFileSystem()
 void SystemClass::initializePins()
 {
     pinMode(Wifi::wifiStatusLed,OUTPUT);
+    pinMode(Wifi::forcedApModePin,INPUT);
     digitalWrite(Wifi::wifiStatusLed,HIGH);
 }
 

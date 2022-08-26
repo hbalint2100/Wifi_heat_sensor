@@ -15,6 +15,11 @@ Wifi::Wifi(const String& SSID,const String& PASSWD)
     setSSID(SSID);
 }
 
+bool Wifi::forcedApMode()
+{
+    return digitalRead(forcedApModePin) == LOW;
+}
+
 bool Wifi::enable()
 {
     disabled = false;
@@ -43,6 +48,9 @@ void Wifi::getWifiData()
             String line;
             String ssid;
             String passwd;
+            String s_staticIp;
+            String s_subnetMask;
+            String s_gatewayIp;
             int startPos;
             while(config.available())
             {
@@ -59,6 +67,24 @@ void Wifi::getWifiData()
                     passwd = line.substring(startPos+1);
                     passwd.trim();
                     setPASSWD(passwd);
+                }
+                else if((line.startsWith("STATIC_IP")||line.startsWith("static_ip"))&&AdvancedString::findSubString(line,"=",startPos))
+                {
+                    s_staticIp = line.substring(startPos+1);
+                    s_staticIp.trim();
+                    staticIP.fromString(s_staticIp);
+                }
+                else if((line.startsWith("SUBNET_MASK")||line.startsWith("subnet_mask"))&&AdvancedString::findSubString(line,"=",startPos))
+                {
+                    s_subnetMask = line.substring(startPos+1);
+                    s_subnetMask.trim();
+                    subnetMask.fromString(s_subnetMask);
+                }
+                else if((line.startsWith("GATEWAY_IP")||line.startsWith("gateway_ip"))&&AdvancedString::findSubString(line,"=",startPos))
+                {
+                    s_gatewayIp = line.substring(startPos+1);
+                    s_gatewayIp.trim();
+                    gateway.fromString(s_gatewayIp);
                 }
             }
             config.close();
@@ -86,6 +112,10 @@ bool Wifi::wifiSTAMode()
     WiFi.mode(WIFI_STA);
     WiFi.setOutputPower(20.5);
     WiFi.setPhyMode(WIFI_PHY_MODE_11N);
+    if(staticIP.isSet()&&gateway.isSet()&&subnetMask.isSet())
+    {
+        WiFi.config(staticIP,gateway,subnetMask);
+    }
     WiFi.begin(this->SSID,this->PASSWD);
     WiFi.setAutoConnect(true);
     WiFi.setAutoReconnect(true);
@@ -123,13 +153,17 @@ void Wifi::wifiAPMode()
 void Wifi::connect()
 {
     enable();
+    Serial.println("Trying to connect...");
     if(WiFi.status()!=WL_CONNECTED)
     {
-        if(!SSID.isEmpty()&&wifiSTAMode())
+        if(!SSID.isEmpty()&&!forcedApMode()&&wifiSTAMode())
         {
             return;
         }
-        wifiAPMode();
+        if(WiFi.getMode()!=WIFI_AP&&WiFi.getMode()!=WIFI_AP_STA)
+        {
+            wifiAPMode();
+        }
     }
 }
 

@@ -24,3 +24,8 @@ void Message::setKey(const String& _key)
 {
     this->key = _key;
 }
+
+long Message::getTime()
+{
+    return time;
+}

@@ -1,6 +1,8 @@
 #include "Sensors.h"
 
-Sensors::Sensors() : dht22(13,DHT22)
+const unsigned Sensors::digitalSensorPin = 13;
+
+Sensors::Sensors() : dht22(digitalSensorPin,DHT22)
 {
     dht22.begin();
 }

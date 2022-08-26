@@ -9,8 +9,10 @@ class Message
     unsigned receiverMessengerTaskId = 0;
     String key;
     String message;
+    long time = 0;
     void setKey(const String& key);
     public:
+    long getTime();
     void setMessageText(const String& message);
     const String& getMessageText();
     unsigned getSenderMessengerTaskId();
