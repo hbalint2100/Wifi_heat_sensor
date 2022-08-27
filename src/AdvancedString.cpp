@@ -12,3 +12,31 @@ bool AdvancedString::findSubString(const String& text,String match,int& startPos
   }
   return false;
 }
+
+bool AdvancedString::findSubString(const String& text,String startSymbol,String endSymbol,String& foundBetween)
+{
+  unsigned endSymbolpos = 0;
+  unsigned startSymbolpos = 0;
+  for(unsigned i = 0; i < text.length()-endSymbol.length();i++)
+  {
+    if(endSymbol.compareTo(text.substring(i,i+endSymbol.length()))==0)
+    {
+      endSymbolpos = i;
+      break;
+    }
+  }
+  for(unsigned i = 0; i+startSymbol.length() < endSymbolpos&&i<text.length()-startSymbol.length();i++)
+  {
+    if(startSymbol.compareTo(text.substring(i,i+startSymbol.length()))==0)
+    {
+      startSymbolpos = i+startSymbol.length();
+      break;
+    }
+  }
+  if(endSymbolpos>startSymbolpos)
+  {
+    foundBetween = text.substring(startSymbolpos,endSymbolpos);
+    return true;
+  }
+  return false;
+}

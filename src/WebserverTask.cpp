@@ -27,6 +27,7 @@ void WebserverTask::root()
 void WebserverTask::api()
 {
     Serial.println(webserver.uri());
+    Serial.println("Plain:"+webserver.arg("plain"));
     for(int i = 0; i<webserver.args();i++)
     {
         Serial.println(webserver.argName(i)+":"+webserver.arg(i));
