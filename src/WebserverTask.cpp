@@ -2,7 +2,7 @@
 
 static const char content[] PROGMEM = "<!DOCTYPE html><html><head><title>404 - Page not found!</title> <meta charset=\"UTF-8\"></head><body><h1>404 - Requested page not found!</h1></body></html>";
 
-WebserverTask::WebserverTask(int port) : SystemControlledTask("WebserverTask"), webserver(port)
+WebserverTask::WebserverTask(int port) : SystemControlledTask("WebserverTask"), webserver(port), espAPI(System.getSensorCtrl(),System.getWifiCtrl(),System.getMqttCtrl(),System)
 {
     updateserver.setup(&webserver);
 }
@@ -26,15 +26,16 @@ void WebserverTask::root()
 
 void WebserverTask::api()
 {
-    Serial.println(webserver.uri());
-    Serial.println("Plain:"+webserver.arg("plain"));
-    for(int i = 0; i<webserver.args();i++)
+    if(webserver.method()==HTTP_GET)
     {
-        Serial.println(webserver.argName(i)+":"+webserver.arg(i));
-    }
-    for(int i = 0; i < webserver.headers();i++)
-    {
-        Serial.println("Header"+i + ':'+webserver.header(i));
+        APIRequestArg *args = new APIRequestArg[webserver.args()];
+        for(int i = 0; i<webserver.args();i++)
+        {
+            args[i] = {webserver.argName(i),webserver.arg(i)};
+        }
+        APIResponse  response = espAPI.resolve(webserver.method(),args,webserver.args());
+        delete[] args;
+        webserver.send(response.httpCode,response.contentType,response.content);
     }
 }
 

@@ -1,10 +1,14 @@
 #include "Sensors.h"
 
-const unsigned Sensors::digitalSensorPin = 13;
-
 Sensors::Sensors() : dht22(digitalSensorPin,DHT22)
 {
-    dht22.begin();
+    if(digitalRead(isDigitalSensor)==HIGH)
+    {
+        humidityEnabled = true;
+        dht22.begin();
+        return;
+    }
+    humidityEnabled = false;
 }
 
 float Sensors::getHumidity()
@@ -15,4 +19,14 @@ float Sensors::getHumidity()
 float Sensors::getTemperature()
 {
     return dht22.readTemperature();
+}
+
+bool Sensors::isTemperatureEnabled()
+{
+    return true;
+}
+
+bool Sensors::isHumidityEnabled()
+{
+    return humidityEnabled;
 }

@@ -5,7 +5,7 @@ void SystemTask::loop()
 {
     if((WiFi.getMode()==WIFI_AP_STA||WiFi.getMode()==WIFI_STA)
     &&System.getMqttCtrl().getClient().connected()
-    &&millis()>System.lastSleep)
+    &&millis()>System.lastSleep&&false)
     {
         Message messages[5];
         receiveMessage(messages,5,"System");

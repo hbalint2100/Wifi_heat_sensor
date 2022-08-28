@@ -92,6 +92,48 @@ void Wifi::getWifiData()
     }
 }
 
+bool setWifiData(String typeName,String value)
+{
+    bool success = false;
+    if(LittleFS.exists(CONF_PATH))
+    {
+        File config = LittleFS.open(CONF_PATH,"r+");
+        if(!config)
+        {
+            Serial.println("Config file couldn't be opened");
+            return false;
+        }
+        else
+        {
+            String file;
+            String line;
+            int startPos;
+            while(config.available())
+            {
+                line = config.readStringUntil('\n');
+                if(line.startsWith(typeName)&&AdvancedString::findSubString(line,"=",startPos))
+                {
+                    line = line.substring(0,startPos+1);
+                    line += value;
+                    success = true;
+                }
+                file += line;
+            }
+            if(!success)
+            {
+                file += typeName + "=" + value;
+                success = true;
+            }
+            if(config.availableForWrite())
+            {
+                config.write(file.c_str());
+            }
+            config.close();
+        }
+    }
+    return success;
+}
+
 bool Wifi::wifiSTAMode()
 {
     if(disabled)
@@ -172,22 +214,70 @@ bool Wifi::disconnect()
     return WiFi.disconnect(true);
 }
 
-void Wifi::setPASSWD(const String& PASSWD)
+bool Wifi::setPASSWD(const String& PASSWD)
 {
     this->PASSWD = PASSWD;
+    return setWifiData("PASSWD",PASSWD);
 }
 
-void Wifi::setSSID(const String& SSID)
+bool Wifi::setSSID(const String& SSID)
 {
     this->SSID = SSID;
+    return setWifiData("SSID",SSID);
 }
 
-String Wifi::getPASSWD()
+const String& Wifi::getPASSWD()
 {
     return PASSWD;
 }
 
-String Wifi::getSSID()
+const String& Wifi::getSSID()
 {
     return SSID;
+}
+
+bool Wifi::isConnected()
+{
+    return WiFi.status()==WL_CONNECTED;
+}
+
+bool Wifi::isDHCPEnabled()
+{
+    return staticIP.isSet()&&gateway.isSet()&&subnetMask.isSet();
+}
+
+String Wifi::getStaticIP()
+{
+    return staticIP.toString();
+}
+
+String Wifi::getGatewayIP()
+{
+    return gateway.toString();
+}
+
+String Wifi::getSubnetMask()
+{
+    return subnetMask.toString();
+}
+
+bool Wifi::setStaticIP(const String& _staticIP)
+{
+    return staticIP.fromString(_staticIP)&&setWifiData("STATIC_IP",_staticIP);
+}
+
+bool Wifi::setGatewayIP(const String& gatewayIP)
+{
+    return gateway.fromString(gatewayIP)&&setWifiData("GATEWAY_IP",gatewayIP);
+}
+
+bool Wifi::setSubnetMask(const String& _subnetMask)
+{
+    return subnetMask.fromString(_subnetMask)&&setWifiData("SUBNET_MASK",_subnetMask);
+}
+
+bool Wifi::loadConfig()
+{
+    connect();
+    return true;
 }

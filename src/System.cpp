@@ -117,6 +117,11 @@ void SystemClass::sleep(unsigned timeInSeconds)
     ESP.deepSleep(timeInSeconds*1000000L,RF_DEFAULT);
 }
 
+unsigned long SystemClass::getSystemUpTime()
+{
+    return millis();
+}
+
 void SystemClass::restart()
 {
     ESP.restart();

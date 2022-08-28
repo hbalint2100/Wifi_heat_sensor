@@ -4,9 +4,9 @@
 #include "SystemControlledTask.h"
 #include "Messenger.h"
 #include "Sensors.h"
-#include "MessengerInterface.h"
+#include "APISystemInterface.h"
 
-class SystemClass : public MessengerInterface
+class SystemClass : public APISystemInterface
 {
     private:
     static bool fileSystemMounted;
@@ -29,7 +29,8 @@ class SystemClass : public MessengerInterface
     static Messenger& getMessenger();
     static void addTask(SystemControlledTask *task);
     static SystemControlledTask* getTaskWithId(String ID);
-    static void restart();
+    void restart();
+    unsigned long getSystemUpTime();
     static void sleep(unsigned timeInSeconds);
 };
 

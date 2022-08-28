@@ -7,6 +7,8 @@
 #include "Messenger.h"
 #include "System.h"
 
+SystemClass System;
+
 void setup() 
 {
   // put your setup code here, to run once:
