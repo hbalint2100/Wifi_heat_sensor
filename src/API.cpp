@@ -50,7 +50,7 @@ APIResponse API::resolve(const HTTPMethod& method, APIRequestArg *args,unsigned 
             }
         }
     }
-    return {204,"application/json","{}"};
+    return {404,"application/json","{}"};
 }
 
 bool API::GET(String argName,String& argValue,APIRequestArg* args,unsigned size)

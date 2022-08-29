@@ -243,22 +243,22 @@ bool Wifi::isConnected()
 
 bool Wifi::isDHCPEnabled()
 {
-    return staticIP.isSet()&&gateway.isSet()&&subnetMask.isSet();
+    return !(staticIP.isSet()&&gateway.isSet()&&subnetMask.isSet());
 }
 
 String Wifi::getStaticIP()
 {
-    return staticIP.toString();
+    return staticIP.isSet()? staticIP.toString():"";
 }
 
 String Wifi::getGatewayIP()
 {
-    return gateway.toString();
+    return gateway.isSet()? gateway.toString():"";
 }
 
 String Wifi::getSubnetMask()
 {
-    return subnetMask.toString();
+    return subnetMask.isSet()? subnetMask.toString():"";
 }
 
 bool Wifi::setStaticIP(const String& _staticIP)
