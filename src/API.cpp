@@ -224,7 +224,7 @@ bool API::setWifiData(const String& json)
     String line;
     int success = 0;
     int tried = 0;
-    if(AdvancedString::findSubString(json,"\"ssid\"",",",line)||AdvancedString::findSubString(json,"\"ssid\"","}",line))
+    if(AdvancedString::findSubString(json,"\"ssid\"",",",line,false)||AdvancedString::findSubString(json,"\"ssid\"","}",line,false))
     {
         String value;
         if(AdvancedString::findSubString(line,"\"","\"",value))
@@ -236,7 +236,7 @@ bool API::setWifiData(const String& json)
             }
         }
     }
-    if(AdvancedString::findSubString(json,"\"passwd\"",",",line)||AdvancedString::findSubString(json,"\"passwd\"","}",line))
+    if(AdvancedString::findSubString(json,"\"passwd\"",",",line,false)||AdvancedString::findSubString(json,"\"passwd\"","}",line,false))
     {
         String value;
         if(AdvancedString::findSubString(line,"\"","\"",value))
@@ -248,7 +248,7 @@ bool API::setWifiData(const String& json)
             }
         }
     }
-    if(AdvancedString::findSubString(json,"\"gatewayIP\"",",",line)||AdvancedString::findSubString(json,"\"gatewayIP\"","}",line))
+    if(AdvancedString::findSubString(json,"\"gatewayIP\"",",",line,false)||AdvancedString::findSubString(json,"\"gatewayIP\"","}",line,false))
     {
         String value;
         if(AdvancedString::findSubString(line,"\"","\"",value))
@@ -260,7 +260,7 @@ bool API::setWifiData(const String& json)
             }
         }
     }
-    if(AdvancedString::findSubString(json,"\"subnetMask\"",",",line)||AdvancedString::findSubString(json,"\"subnetMask\"","}",line))
+    if(AdvancedString::findSubString(json,"\"subnetMask\"",",",line,false)||AdvancedString::findSubString(json,"\"subnetMask\"","}",line,false))
     {
         String value;
         if(AdvancedString::findSubString(line,"\"","\"",value))
@@ -272,7 +272,7 @@ bool API::setWifiData(const String& json)
             }
         }
     }
-    if(AdvancedString::findSubString(json,"\"staticIP\"",",",line)||AdvancedString::findSubString(json,"\"staticIP\"","}",line))
+    if(AdvancedString::findSubString(json,"\"staticIP\"",",",line,false)||AdvancedString::findSubString(json,"\"staticIP\"","}",line,false))
     {
         String value;
         if(AdvancedString::findSubString(line,"\"","\"",value))
@@ -284,7 +284,7 @@ bool API::setWifiData(const String& json)
             }
         }
     }
-    return success==tried;
+    return success==tried&&success!=0;
 }
 
 bool API::setMqttData(const String& json)
@@ -292,7 +292,7 @@ bool API::setMqttData(const String& json)
     String line;
     int success = 0;
     int tried = 0;
-    if(AdvancedString::findSubString(json,"\"brokerIP\"",",",line)||AdvancedString::findSubString(json,"\"brokerIP\"","}",line))
+    if(AdvancedString::findSubString(json,"\"brokerIP\"",",",line,false)||AdvancedString::findSubString(json,"\"brokerIP\"","}",line,false))
     {
         String value;
         if(AdvancedString::findSubString(line,"\"","\"",value))
@@ -304,7 +304,7 @@ bool API::setMqttData(const String& json)
             }
         }
     }
-    if(AdvancedString::findSubString(json,"\"brokerPort\"",",",line)||AdvancedString::findSubString(json,"\"brokerPort\"","}",line))
+    if(AdvancedString::findSubString(json,"\"brokerPort\"",",",line,false)||AdvancedString::findSubString(json,"\"brokerPort\"","}",line,false))
     {
         String value;
         int pos;
@@ -321,7 +321,7 @@ bool API::setMqttData(const String& json)
             success++;
         }
     }
-    if(AdvancedString::findSubString(json,"\"deviceName\"",",",line)||AdvancedString::findSubString(json,"\"deviceName\"","}",line))
+    if(AdvancedString::findSubString(json,"\"deviceName\"",",",line,false)||AdvancedString::findSubString(json,"\"deviceName\"","}",line,false))
     {
         String value;
         if(AdvancedString::findSubString(line,"\"","\"",value))
@@ -333,7 +333,7 @@ bool API::setMqttData(const String& json)
             }
         }
     }
-    if(AdvancedString::findSubString(json,"\"password\"",",",line)||AdvancedString::findSubString(json,"\"password\"","}",line))
+    if(AdvancedString::findSubString(json,"\"password\"",",",line,false)||AdvancedString::findSubString(json,"\"password\"","}",line,false))
     {
         String value;
         if(AdvancedString::findSubString(line,"\"","\"",value))
@@ -345,7 +345,7 @@ bool API::setMqttData(const String& json)
             }
         }
     }
-    if(AdvancedString::findSubString(json,"\"username\"",",",line)||AdvancedString::findSubString(json,"\"username\"","}",line))
+    if(AdvancedString::findSubString(json,"\"username\"",",",line,false)||AdvancedString::findSubString(json,"\"username\"","}",line,false))
     {
         String value;
         if(AdvancedString::findSubString(line,"\"","\"",value))
@@ -357,5 +357,5 @@ bool API::setMqttData(const String& json)
             }
         }
     }
-    return success==tried;
+    return success==tried&&success!=0;
 }

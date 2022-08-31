@@ -13,8 +13,15 @@ bool AdvancedString::findSubString(const String& text,String match,int& startPos
   return false;
 }
 
-bool AdvancedString::findSubString(const String& text,String startSymbol,String endSymbol,String& foundBetween)
+bool AdvancedString::findSubString(const String& _text,String startSymbol,String endSymbol,String& foundBetween,bool caseSensitive)
 {
+  String text = _text;
+  if(!caseSensitive)
+  {
+    startSymbol.toLowerCase();
+    endSymbol.toLowerCase();
+    text.toLowerCase();
+  }
   unsigned endSymbolpos = 0;
   unsigned startSymbolpos = 0;
   bool foundOnce = false;
@@ -43,7 +50,7 @@ bool AdvancedString::findSubString(const String& text,String startSymbol,String 
   }
   if(matched==0&&endSymbolpos>startSymbolpos)
   {
-    foundBetween = text.substring(startSymbolpos,endSymbolpos);
+    foundBetween = _text.substring(startSymbolpos,endSymbolpos);
     return true;
   }
   return false;
