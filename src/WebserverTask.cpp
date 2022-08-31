@@ -26,17 +26,14 @@ void WebserverTask::root()
 
 void WebserverTask::api()
 {
-    if(webserver.method()==HTTP_GET)
+    APIRequestArg *args = new APIRequestArg[webserver.args()];
+    for(int i = 0; i<webserver.args();i++)
     {
-        APIRequestArg *args = new APIRequestArg[webserver.args()];
-        for(int i = 0; i<webserver.args();i++)
-        {
-            args[i] = {webserver.argName(i),webserver.arg(i)};
-        }
-        APIResponse  response = espAPI.resolve(webserver.method(),args,webserver.args());
-        delete[] args;
-        webserver.send(response.httpCode,response.contentType,response.content);
+        args[i] = {webserver.argName(i),webserver.arg(i)};
     }
+    APIResponse  response = espAPI.resolve(webserver.method(),args,webserver.args());
+    delete[] args;
+    webserver.send(response.httpCode,response.contentType,response.content);
 }
 
 void WebserverTask::apiWrapper(WebserverTask *instance)

@@ -101,7 +101,7 @@ bool setMqttData(String typeName,String value)
     bool success = false;
     if(LittleFS.exists(CONF_PATH))
     {
-        File config = LittleFS.open(CONF_PATH,"r+");
+        File config = LittleFS.open(CONF_PATH,"r");
         if(!config)
         {
             Serial.println("Config file couldn't be opened");
@@ -121,17 +121,16 @@ bool setMqttData(String typeName,String value)
                     line += value;
                     success = true;
                 }
-                file += line;
+                file += line + '\n';
             }
             if(!success)
             {
                 file += typeName + "=" + value;
                 success = true;
             }
-            if(config.availableForWrite())
-            {
-                config.write(file.c_str());
-            }
+            config.close();
+            config = LittleFS.open(CONF_PATH,"w");
+            config.print(file);
             config.close();
         }
     }

@@ -26,7 +26,9 @@ class API
     bool GET(String argName,String& argValue,APIRequestArg* args,unsigned size);
     bool getSensorData(APIRequestArg *args,unsigned size,String& response);
     bool getWifiData(APIRequestArg *args,unsigned size,String& response);
+    bool setWifiData(const String& request);
     bool getMqttData(APIRequestArg *args,unsigned size,String& response);
+    bool setMqttData(const String& request);
     bool getSystemData(APIRequestArg *args,unsigned size,String& response);
     public:
     API(APISensorInterface& _sensor,APIWifiInterface& _wifi,APIMqttInterface& _mqtt,APISystemInterface& _system) 
