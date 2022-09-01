@@ -196,6 +196,10 @@ bool MQTT::setBrokerIP(const String& _brokerIP)
 
 bool MQTT::setBrokerPort(unsigned port)
 {
+    if(port==0)
+    {
+        return false;
+    }
     brokerPort = port;
     return setMqttData("MQTT_BROKER_PORT",String(port));
 }
