@@ -1,12 +1,47 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <title>
-            Hello World!
-        </title>
-        <meta charset="UTF-8">
-    </head>
-    <body>
-        <h1>Szia Bebi!</h1>
-    </body>
+  <head>
+    <title>
+      Hello World!
+    </title>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <header>
+      <h1>Wifi application</h1>
+    </header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="wifi.html">Wifi</a>
+      <a href="mqtt.html">Mqtt</a>
+      <a href="system.html">System</a>
+    </nav>
+    <main id="container">
+      <p>Loading...</p>
+    </main>
+  </body>
+<script>
+  fetch('http://localhost:3000/api.php?src=sensor&type=all')
+    .then(data => data.json())
+    .then(data => {
+      document.getElementById('container').innerHTML = `<div>
+        Temperature: ${data.temperature}℃ <progress value="${data.temperature + 30}" max="80"></progress><br/> 
+        Humidity: ${data.humidity}% <progress value="${data.humidity}" min="0" max="100"></progress></div>`
+    })
+
+</script>
+<style>
+header h1 {
+  text-align: center;
+}
+nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+#container {
+  display: flex;
+  justify-content: center;
+}
+</style>
 </html>
