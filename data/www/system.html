@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      System
+    </title>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <header>
+      <h1>Wifi application</h1>
+    </header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="wifi.html">Wifi</a>
+      <a href="mqtt.html">Mqtt</a>
+      <a href="system.html">System</a>
+    </nav>
+    <main id="container">
+      <p>Loading...</p>
+    </main>
+  </body>
+<script>
+    fetch('http://localhost:3000/api.php?src=system&info=all')
+        .then(data => data.json())
+        .then(data => {
+        document.getElementById('container').innerHTML = `<div>
+            <p>System time: ${data.systemtime}</p>
+            <button onclick="restartButton()">Restart</button></div>`
+    })
+
+    function restartButton() {
+        fetch('http://localhost:3000/api.php?src=system&action=restart')
+    }
+</script>
+<style>
+header h1 {
+  text-align: center;
+}
+nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+#container * {
+    text-align: center;
+}
+</style>
+</html>
