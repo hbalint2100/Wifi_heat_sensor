@@ -14,7 +14,12 @@ void WebserverTask::notFound()
 
 void WebserverTask::root()
 {
-    File html = LittleFS.open("/www/index.html","r");
+    String path = webserver.uri().substring(1);
+    if(path==emptyString)
+    {
+        path = "index";
+    }
+    File html = LittleFS.open("/www/"+path+".html","r");
     if(!html||!html.available())
     {
         notFound();
@@ -51,9 +56,14 @@ void WebserverTask::notFoundWrapper(WebserverTask *instance)
     instance->notFound();
 }
 
+
+
 void WebserverTask::setup()
 {
     webserver.on("/",HTTP_GET,std::bind(&WebserverTask::rootWrapper,this));
+    webserver.on("/system",HTTP_GET,std::bind(&WebserverTask::rootWrapper,this));
+    webserver.on("/mqtt",HTTP_GET,std::bind(&WebserverTask::rootWrapper,this));
+    webserver.on("/wifi",HTTP_GET,std::bind(&WebserverTask::rootWrapper,this));
     webserver.on("/api",std::bind(&WebserverTask::apiWrapper,this));
     webserver.onNotFound(std::bind(&WebserverTask::notFoundWrapper,this));
     webserver.begin();
