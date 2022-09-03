@@ -2,7 +2,7 @@
 <html>
   <head>
     <title>
-      Hello World!
+      Wifi application
     </title>
     <meta charset="UTF-8">
   </head>
@@ -21,14 +21,17 @@
     </main>
   </body>
 <script>
-  fetch('http://localhost:3000/api.php?src=sensor&type=all')
-    .then(data => data.json())
-    .then(data => {
-      document.getElementById('container').innerHTML = `<div>
-        Temperature: ${data.temperature}℃ <progress value="${data.temperature + 30}" max="80"></progress><br/> 
-        Humidity: ${data.humidity}% <progress value="${data.humidity}" min="0" max="100"></progress></div>`
+  function getData() {
+    fetch('http://localhost:3000/api.php?src=sensor&type=all')
+      .then(data => data.json())
+      .then(data => {
+        document.getElementById('container').innerHTML = `<div>
+          Temperature: ${data.temperature}℃ <progress value="${data.temperature + 30}" max="80"></progress><br/> 
+          Humidity: ${data.humidity}% <progress value="${data.humidity}" min="0" max="100"></progress></div>`
     })
-
+  }
+  getData()
+  setInterval(getData, 20000)
 </script>
 <style>
 header h1 {

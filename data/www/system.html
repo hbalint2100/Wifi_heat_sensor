@@ -21,17 +21,22 @@
     </main>
   </body>
 <script>
+  function getData() {
     fetch('http://localhost:3000/api.php?src=system&info=all')
-        .then(data => data.json())
-        .then(data => {
+      .then(data => data.json())
+      .then(data => {
         document.getElementById('container').innerHTML = `<div>
-            <p>System time: ${data.systemtime}</p>
-            <button onclick="restartButton()">Restart</button></div>`
+          <p>System time: ${data.systemTime}</p>
+          <button onclick="restartButton()">Restart</button></div>`
     })
+  }
 
-    function restartButton() {
-        fetch('http://localhost:3000/api.php?src=system&action=restart')
-    }
+  function restartButton() {
+      fetch('http://localhost:3000/api.php?src=system&action=restart')
+  }
+
+  getData()
+  setInterval(getData, 20000)
 </script>
 <style>
 header h1 {
