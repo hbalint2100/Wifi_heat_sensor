@@ -48,9 +48,8 @@ class Data {
                 return $this->systemData();
             case Sources::MQTT:
                 return $this->mqttData();
-            /*
             case Sources::WIFI:
-            */
+                return $this->wifiData();
         }
     }
 
@@ -89,6 +88,16 @@ class Data {
             return ['deviceName' => 'MockAPI'];
         else if($info == 'username')
             return ['username' => 'Gipsz Jakab'];
+    }
+
+    function wifiData() {
+        $info = 'all';
+        if(isset($_GET['info']))
+            $info = $_GET['info'];
+        if($info == 'all')
+            return ['ssid' => 'HUWlan_2.4G_EXT', 'dhcp' => true,
+                'connected' => true, 'gatewayIP' => '192.168.1.1',
+                'subnetMask' => '255.255.255.0', 'staticIP' => '192.168.1.10'];
     }
 };
 
