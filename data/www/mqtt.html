@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>
+      Mqtt
+    </title>
+    <meta charset="UTF-8">
+  </head>
+  <body>
+    <header>
+      <h1>Wifi application</h1>
+    </header>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="wifi.html">Wifi</a>
+      <a href="mqtt.html">Mqtt</a>
+      <a href="system.html">System</a>
+    </nav>
+    <main id="container">
+      <p>Loading...</p>
+    </main>
+  </body>
+<script>
+  function getData() {
+    fetch('http://localhost:3000/api.php?src=mqtt&info=all')
+      .then(data => data.json())
+      .then(data => {
+        document.getElementById('container').innerHTML = `<div>
+          <p>Device name:</p>
+          <input id="deviceName" value="${data.deviceName}">
+          <p>Username:</p>
+          <input id="username" value="${data.username}">
+          <p>Broker IP:</p>
+          <input id="brokerIP" value="${data.brokerIP}">
+          <p>Broker Port:</p>
+          <input id="brokerPort" type="number" value="${data.brokerPort}">
+          <br/>
+          <button onclick="submit()">Submit</button>
+          </div>`
+    })
+  }
+
+  function submit() {
+    fetch(`http://localhost:3000/api.php`, {
+        method: 'POST',
+
+        body: JSON.stringify({
+            dst: 'mqtt',
+            deviceName: deviceName.value,
+            username: username.value,
+            brokerIP: brokerIP.value,
+            brokerPort: brokerPort.value
+        }),
+
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8'
+        }
+    })
+  }
+
+  getData()
+</script>
+<style>
+header h1 {
+  text-align: center;
+}
+nav {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+#container * {
+    text-align: center;
+}
+</style>
+</html>
