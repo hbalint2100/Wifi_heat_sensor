@@ -1,32 +1,43 @@
-#include <Arduino.h>
-#include "Wifi.h"
 #include "Scheduler.h"
 #include "WebserverTask.h"
-#include "LittleFS.h"
+#include "WifiscanTask.h"
+#include "SensingTask.h"
+#include "SystemTask.h"
+#include "MqttTask.h"
+#include "Messenger.h"
+#include "System.h"
 
-Wifi wifiCtrl;
-WebserverTask webserverTask(80);
-bool blink = false;
+SystemClass System;
 
-void setup() {
+void setup() 
+{
   // put your setup code here, to run once:
-  Serial.begin(9600);
-  delay(50);
-  Serial.println();
-  LittleFSConfig cfg;
-  cfg.setAutoFormat(true);
-  LittleFS.setConfig(cfg);
-  if(!LittleFS.begin())
+  System.initializeSerial();
+  System.mountFileSystem();
+  System.initializePins();
+  WebserverTask webserverTask(80);
+  if(System.wakeUpFromDS())
   {
-    Serial.println("File system mount error");
-    return;
+    System.wake();
+    webserverTask.disable();
   }
-  pinMode(Wifi::wifiStatusLed,OUTPUT);
-  digitalWrite(Wifi::wifiStatusLed,HIGH);
-  delay(200);
-  wifiCtrl.getWifiData();
-  wifiCtrl.connect();
+  System.getWifiCtrl().getWifiData();
+  System.getWifiCtrl().connect();
+  System.getMqttCtrl().getMqttData();
+  WifiscanTask wifiscanTask;
+  MqttTask mqttTask;
+  SensingTask sensingTask;
+  SystemTask systemTask;
+  System.addTask(&webserverTask);
+  System.addTask(&wifiscanTask);
+  System.getMessenger().registerTask(mqttTask);
+  System.getMessenger().registerTask(sensingTask);
+  System.getMessenger().registerTask(systemTask);
+  Scheduler.start(&sensingTask);
   Scheduler.start(&webserverTask);
+  Scheduler.start(&wifiscanTask);
+  Scheduler.start(&mqttTask);
+  Scheduler.start(&systemTask);
   Scheduler.begin();
 }
 

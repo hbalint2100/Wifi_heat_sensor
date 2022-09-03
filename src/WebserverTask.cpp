@@ -1,16 +1,25 @@
 #include "WebserverTask.h"
 
-WebserverTask::WebserverTask(int port) : webserver(port){}
+static const char content[] PROGMEM = "<!DOCTYPE html><html><head><title>404 - Page not found!</title> <meta charset=\"UTF-8\"></head><body><h1>404 - Requested page not found!</h1></body></html>";
+
+WebserverTask::WebserverTask(int port) : SystemControlledTask("WebserverTask"), webserver(port), espAPI(System.getSensorCtrl(),System.getWifiCtrl(),System.getMqttCtrl(),System)
+{
+    updateserver.setup(&webserver);
+}
 
 void WebserverTask::notFound()
 {
-    String content = "<!DOCTYPE html><html><head><title>404 - Page not found!</title> <meta charset=\"UTF-8\"></head><body><h1>404 - Requested page not found!</h1></body></html>";
     webserver.send(404,"text/html",content);
 }
 
 void WebserverTask::root()
 {
-    File html = LittleFS.open("/www/index.html","r");
+    String path = webserver.uri().substring(1);
+    if(path==emptyString)
+    {
+        path = "index";
+    }
+    File html = LittleFS.open("/www/"+path+".html","r");
     if(!html||!html.available())
     {
         notFound();
@@ -22,15 +31,14 @@ void WebserverTask::root()
 
 void WebserverTask::api()
 {
-    Serial.println(webserver.uri());
+    APIRequestArg *args = new APIRequestArg[webserver.args()];
     for(int i = 0; i<webserver.args();i++)
     {
-        Serial.println(webserver.argName(i)+":"+webserver.arg(i));
+        args[i] = {webserver.argName(i),webserver.arg(i)};
     }
-    for(int i = 0; i < webserver.headers();i++)
-    {
-        Serial.println("Header"+i + ':'+webserver.header(i));
-    }
+    APIResponse  response = espAPI.resolve(webserver.method(),args,webserver.args());
+    delete[] args;
+    webserver.send(response.httpCode,response.contentType,response.content);
 }
 
 void WebserverTask::apiWrapper(WebserverTask *instance)
@@ -48,9 +56,14 @@ void WebserverTask::notFoundWrapper(WebserverTask *instance)
     instance->notFound();
 }
 
+
+
 void WebserverTask::setup()
 {
     webserver.on("/",HTTP_GET,std::bind(&WebserverTask::rootWrapper,this));
+    webserver.on("/system",HTTP_GET,std::bind(&WebserverTask::rootWrapper,this));
+    webserver.on("/mqtt",HTTP_GET,std::bind(&WebserverTask::rootWrapper,this));
+    webserver.on("/wifi",HTTP_GET,std::bind(&WebserverTask::rootWrapper,this));
     webserver.on("/api",std::bind(&WebserverTask::apiWrapper,this));
     webserver.onNotFound(std::bind(&WebserverTask::notFoundWrapper,this));
     webserver.begin();

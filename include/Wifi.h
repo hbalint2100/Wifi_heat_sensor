@@ -3,26 +3,45 @@
 #include <ESP8266WiFi.h>
 #include "AdvancedString.h"
 #include "LittleFS.h"
+#include "APIWifiInterface.h"
 
-class Wifi
+class Wifi : public APIWifiInterface
 {
     private:
         String SSID;
         String PASSWD;
+        IPAddress staticIP;
+        IPAddress gateway;
+        IPAddress subnetMask;
+        bool disabled;
         bool findSubString(const String& text,String match,int& startPos);
         void wifiAPMode();
-        void wifiSTAMode();
+        bool wifiSTAMode();
+        bool forcedApMode();
     public:
         Wifi(const String& ssid,const String& password);
         Wifi();
-        static const int wifiStatusLed = 2;
+        static const unsigned wifiStatusLed = 2;
+        static const unsigned forcedApModePin = 12;
 
+        const String& getSSID();
+        const String& getPASSWD();
         void getWifiData();
         void connect();
         bool disconnect();
         bool disable();
         bool enable();
-        void setSSID(const String& SSID);
-        void setPASSWD(const String& PASSWD);
+        bool setSSID(const String& SSID);
+        bool setPASSWD(const String& PASSWD);
+
+        bool isConnected();
+        bool isDHCPEnabled();
+        String getStaticIP();
+        String getGatewayIP();
+        String getSubnetMask();
+        bool setStaticIP(const String& staticIP);
+        bool setGatewayIP(const String& gatewayIP);
+        bool setSubnetMask(const String& subnetMask);
+        bool loadConfig();
     
 };
