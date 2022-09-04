@@ -2,13 +2,13 @@
 <html>
   <head>
     <title>
-      Wifi application
+      Temperature - HUSensor
     </title>
     <meta charset="UTF-8">
   </head>
   <body>
     <header>
-      <h1>Wifi application</h1>
+      <h1>Temperature</h1>
     </header>
     <nav>
       <a href="/">Home</a>
@@ -22,7 +22,7 @@
   </body>
 <script>
   function getData() {
-    fetch('http://localhost:3000/api.php?src=sensor&type=all')
+    fetch('http://'+window.location.host+'/api?src=sensor&type=all')
       .then(data => data.json())
       .then(data => {
         document.getElementById('container').innerHTML = `<div>
