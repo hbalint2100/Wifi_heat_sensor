@@ -118,6 +118,16 @@ bool API::getSensorData(APIRequestArg *args,unsigned size,String& response)
             response += "\"temperature\": "+String(sensor.getTemperature())+',';
             success = true;
        }
+       if((value=="motion"||value=="all")&&sensor.isMotionEnabled())
+       {
+            response += "\"motion\": "+String(sensor.getMotion())+',';
+            success = true;
+       }
+       if((value=="motionsensitivity"||value=="all")&&sensor.isMotionEnabled())
+       {
+            response += "\"motionsensitivity\": "+String(sensor.getMotionSensitivity())+',';
+            success = true;
+       }
     }
     return success;
 }
